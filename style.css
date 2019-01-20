@@ -21,9 +21,8 @@ p {
 
 button {
 	font-size: 30px;
-	font-weight;
-	padding-left: 12vw;
-	padding-right: 12vw;
+	padding-left: 11vw;
+	padding-right: 11vw;
 	background-color: black;
 	color: white;
 	border-radius: 10px;
@@ -43,6 +42,13 @@ div.calculator-box {
 	border-width: 8px;
 	border-radius: 16px;
 	min-height: 450px;
+}
+
+@media only screen and (min-width: 700px) {
+  div.calculator-box {
+  	margin-left: 18vw;
+  	margin-right: 18vw;
+  }
 }
 
 div.button-box{
