@@ -5,13 +5,42 @@ let secondsCounted;
 let trackLocation;
 let incrementTimer;
 
+
 const initializeState = () => {
 	recordedCoords = [];
 	isTracking = false;
 	secondsCounted = 0;	
 }
 
+
 initializeState();
+
+
+const startTimer = () => {
+	// Timer works with no GPS or network, so tracking witout a connection will only track the time.
+	let incrementTimer = (val) => {
+		return val > 9 ? val : "0" + val; 
+	}
+	let updateTimer = () => {
+	    document.getElementById("time-results").innerHTML = incrementTimer(parseInt(secondsCounted/3600,10)) + ":" + incrementTimer(parseInt(secondsCounted/60,10)) + ":" + incrementTimer(++secondsCounted%60);
+  	}
+	countTime = setInterval(updateTimer, 1000);
+}
+
+
+const stopTimer = () => {
+	clearInterval(countTime);
+}
+
+
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+	// Returns distance in KMs between two pairs of coordinates.
+	let p = 0.017453292519943295;    	// Math.PI / 180
+	let c = Math.cos;
+	let a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2;
+	return 12742 * Math.asin(Math.sqrt(a)); 	// 2 * R; R = 6371 km
+} 
+
 
 const processAndShowDistance = () => {
 	// Takes an array of recorded coordinates, counts distance between them, converts it to miles and shows it in the DOM.
@@ -27,15 +56,6 @@ const processAndShowDistance = () => {
 	let distanceMiles = parseFloat(summedDistance * 0.621371).toFixed(2);
 	document.getElementById("distance-results").innerHTML = `${distanceMiles} miles`;
 }
-
-
-const calculateDistance = (lat1, lon1, lat2, lon2) => {
-	// Returns distance in KMs between two pairs of coordinates.
-	let p = 0.017453292519943295;    	// Math.PI / 180
-	let c = Math.cos;
-	let a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2;
-	return 12742 * Math.asin(Math.sqrt(a)); 	// 2 * R; R = 6371 km
-} 
 
 
 const writeCoords = (position) => {
@@ -81,24 +101,13 @@ const onGeoSuccess = (position) => {
 }
 
 
-const startTimer = () => {
-	// Note: this timer doesn't require a GPS or even data connection to work.
-	// So tracking witout a working connection will only track the time.
-	let incrementTimer = (val) => {
-		return val > 9 ? val : "0" + val; 
-	}
-
-	let updateTimer = () => {
-	    document.getElementById("time-results").innerHTML = incrementTimer(parseInt(secondsCounted/3600,10)) + ":" + incrementTimer(parseInt(secondsCo
-	    	ted/60,10)) + ":" + incrementTimer(++secondsCounted%60);
-  	}
-
-	countTime = setInterval(updateTimer, 1000);
-}
-
-
-const stopTimer = () => {
-	clearInterval(countTime);
+const getLocationWithPromise = () => {
+	return new Promise((resolve, reject) => {
+		navigator.geolocation.getCurrentPosition(resolve, reject, {
+	        enableHighAccuracy: true,
+	        timeout: 30000 	// Error triggered after 30 seconds - large timeout to accomodate slow GPS lock on some devices. 
+		});	
+	});
 }
 
 
@@ -108,16 +117,6 @@ const getLocation = () => {
         enableHighAccuracy: true,
         timeout: 50000 	// Large timeout to accomodate slow GPS lock on some devices
 	});	
-}
-
-
-const getLocationWithPromise = () => {
-	return new Promise((resolve, reject) => {
-		navigator.geolocation.getCurrentPosition(resolve, reject, {
-	        enableHighAccuracy: true,
-	        timeout: 30000 	// Error triggered after 30 seconds - large timeout to accomodate slow GPS lock on some devices. 
-		});	
-	});
 }
 
 

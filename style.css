@@ -30,6 +30,7 @@ button {
 	border-color: red;
 	font-family: verdana;
 	letter-spacing: 3px;
+	box-shadow: 0px 0px 12px 1px rgba(250, 120, 120);
 }
 
 div.calculator-box { 
@@ -42,6 +43,7 @@ div.calculator-box {
 	border-width: 8px;
 	border-radius: 16px;
 	min-height: 450px;
+	box-shadow: 0px 0px 25px 1px rgba(100, 100, 100);
 }
 
 @media only screen and (min-width: 700px) {
