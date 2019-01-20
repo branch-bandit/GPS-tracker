@@ -1,21 +1,19 @@
 const minDistance = 0.000000000001;
-let timestamps = [];
-let recordedCoords = [];
-let isTracking = false;
-let secondsCounted = 0;	
+let timestamps;
+let recordedCoords;
+let isTracking;
+let secondsCounted;	
 let trackLocation;
 let incrementTimer;
 
-
-const resetVariables = () => {
+const initializeState = () => {
 	timestamps = [];
 	recordedCoords = [];
 	isTracking = false;
-	stopAndResetTimer();
-	clearInterval(trackLocation);
-	document.getElementById("start-stop-button").innerHTML = "Start";
+	secondsCounted = 0;	
 }
 
+initializeState();
 
 const processAndShowDistance = () => {
 	// Takes an array of recorded coordinates, counts distance between them, converts it to miles and shows it in the DOM.
@@ -42,40 +40,33 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 } 
 
 
-const recordCoords = (position) => {
+const writeCoords = (position) => {
 	// Records geolocation coordinates without checking for movement. Used only for first and last coordinates.
 	timestamps.push(position.timestamp);
 	recordedCoords.push({
 		latitude: position.coords.latitude,
 		longitude: position.coords.longitude
 	});
-	console.log("ping!"); 
+	console.log("Ping! New location recorded."); 
 }
 
 
-const recordCoordsIfMoved = (position) => {
+const writeCoordsIfMoved = (position) => {
 	// Takes geolocation coordinates and records them if they are sufficiently far away from last location.
 	// Required distance is set in the minDistance variable.
-	timestamps.push(position.timestamp);
-	let lastLocation = recordedCoords[recordedCoords.length - 1];
-	let distanceToCheck = calculateDistance(lastLocation.latitude, lastLocation.longitude, position.coords.latitude, position.coords.longitude);
+	const lastLocation = recordedCoords[recordedCoords.length - 1];
+	const distanceToCheck = calculateDistance(lastLocation.latitude, lastLocation.longitude, position.coords.latitude, position.coords.longitude);
 	if (distanceToCheck > minDistance) { 
-		recordedCoords.push({
-			latitude: position.coords.latitude,
-			longitude: position.coords.longitude
-		});
-	console.log("ping! you moved!");
+		writeCoords(position);
 	} else {
-	console.log("ping! no movement detected.")
+	console.log("Ping! No movement detected.")
 	}
 }
 
 
 const onGeoFailure = () => {
 	// Error callback for geolocation function; shows error message while geolocation is failing.
-	if (isTracking) {
-		document.getElementById("status").innerHTML = "Error, please check permissions and connection";
-	}
+	document.getElementById("status").innerHTML = "Error, please check permissions and connection";
 }
 
 
@@ -84,9 +75,9 @@ const onGeoSuccess = (position) => {
 	if (isTracking) {
 		document.getElementById("status").innerHTML = "Tracking...";
 		if (recordedCoords[0]) {
-			recordCoordsIfMoved(position);
+			writeCoordsIfMoved(position);
 		} else {
-			recordCoords(position);
+			writeCoords(position);
 		}
 	processAndShowDistance();
 	}	
@@ -97,7 +88,7 @@ const calculateAndShowTime = (timeArr) => {
 	// Returns final trip time from first and last geolocation timestamp
 	let tripTime = timeArr[timeArr.length -1] - timeArr[0];
 	let	parsedTime = msToTime(tripTime);
-	document.getElementById("time-results").innerHTML = `${parsedTime}`;
+	document.getElementById("time-results").innerHTML = parsedTime;
 } 
 
 
@@ -123,13 +114,12 @@ const startTimer = () => {
 	let updateTimer = () => {
 	    document.getElementById("time-results").innerHTML = incrementTimer(parseInt(secondsCounted/3600,10)) + ":" + incrementTimer(parseInt(secondsCounted/60,10)) + ":" + incrementTimer(++secondsCounted%60);
   	}
-  	
+
 	countTime = setInterval(updateTimer, 1000);
 }
 
 
-const stopAndResetTimer = () => {
-	secondsCounted = 0;
+const stopTimer = () => {
 	clearInterval(countTime);
 }
 
@@ -153,13 +143,6 @@ const getLocationWithPromise = () => {
 }
 
 
-const getResults = () => {
-	calculateAndShowTime(timestamps);
-	processAndShowDistance();
-	document.getElementById("status").innerHTML = "Ride completed. New start will reset values.";
-}
-
-
 const startTracking = () => {
 	isTracking = true;
 	startTimer();
@@ -173,8 +156,20 @@ const startTracking = () => {
 }
 
 
-const stopTracking = () => {
-	getLocationWithPromise().then(recordCoords).then(getResults).then(resetVariables).catch(onGeoFailure);
+const stopTrackingAndReset = () => {
+	getLocationWithPromise().then((position) => {
+		writeCoords(position);
+		calculateAndShowTime(timestamps);
+		processAndShowDistance();
+
+		stopTimer();
+		clearInterval(trackLocation);
+		initializeState();
+
+		document.getElementById("start-stop-button").innerHTML = "Start";
+		document.getElementById("status").innerHTML = "Ride completed. New start will reset values.";
+	})
+	.catch(onGeoFailure);
 }
 
 
@@ -183,6 +178,6 @@ const startOrStopTracking = () => {
 	if (isTracking != true) { 	
 		startTracking();
 	} else {
-		stopTracking();
+		stopTrackingAndReset();
 	}
 }
