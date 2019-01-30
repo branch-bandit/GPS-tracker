@@ -1,0 +1,42 @@
+	<!DOCTYPE html>
+	<html lang="en">
+
+		<head>
+			<title> Distance Calculator </title>
+
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<link rel="stylesheet" type="text/css" href="./style.css" />
+
+		</head>
+
+		<body>
+
+			<script src="index.js">
+			</script>
+
+			<div class="calculator-box">
+				
+				<h2> Distance Calculator </h2>
+				<p id="notice"> Please allow location sharing. Make sure GPS and data are turned on. </p>
+
+				<div class="button-box">
+					<button id="start-stop-button" onclick="startOrStopTracking()">
+						Start
+					</button>
+				</div>
+
+				<div class="result_data">
+					<p id="distance-label"> Covered distance: </p>
+					<p id="distance-results"> - </p>
+					<p id="time-label"> Elapsed time: </p>
+					<p id="time-results"> - </p>
+					<p id="status-label"> Status: </p>	
+					<p id="status"> Ready </p>	
+				</div>
+
+			</div>
+
+		</body>
+
+	</html>

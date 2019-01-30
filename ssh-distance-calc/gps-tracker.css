@@ -1,0 +1,91 @@
+h1 {
+	text-align: center;
+	font-size: 26px;
+	font-family: verdana;
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-top: 6px;
+}
+
+p.calculator-text {
+	font-size: 21px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	letter-spacing: 0.5px;
+}
+
+button#start-stop-button {
+	font-size: 30px;
+	padding-left: 11vw;
+	padding-right: 11vw;
+	background-color: black;
+	color: white;
+	border-radius: 10px;
+	border-width: 3px;
+	border-color: red;
+	font-family: verdana;
+	letter-spacing: 3px;
+	box-shadow: 0px 0px 12px 1px rgba(250, 120, 120);
+}
+
+button:focus{
+	outline: none;
+}
+
+div.calculator-box {
+	/* to compensate for site layout css, which has 16px left padding */
+	margin-right: 16px;
+
+	margin-left: 5vw;
+	margin-right: 5vw;
+	margin-top: 4vh;
+	padding-left: 4vw;
+	padding-right: 4vw;
+	padding-top: 2vh;
+	padding-bottom: 2vh;
+	border-style: solid;
+	border-color: black;
+	border-width: 8px;
+	border-radius: 16px;
+	min-height: 450px;
+	box-shadow: 0px 0px 25px 1px rgba(100, 100, 100);
+}
+
+@media only screen and (min-width: 700px) {
+  div.calculator-box {
+  	margin-left: 18vw;
+  	margin-right: 18vw;
+  }
+}
+
+div.button-box{
+	text-align: center;
+}
+
+p#notice{
+	font-family: trebuchet MS;
+	text-align: center;
+	font-size: 16px;
+	letter-spacing: 0.3px;
+}
+
+p#distance-label, p#time-label, p#status-label{
+	font-size: 17px;
+	font-weight: bold;
+	font-family: verdana;
+	letter-spacing: 0.5px;
+}		
+
+p#distance-results, p#time-results {
+	color: rgb(200, 50, 50);
+	font-weight: bold;
+	font-family: trebuchet MS;
+	letter-spacing: 1px;
+}
+
+p#status {
+	font-size: 16px;
+	color: rgb(200, 50, 50);
+	font-family: trebuchet MS;
+	letter-spacing: 1px;
+}
